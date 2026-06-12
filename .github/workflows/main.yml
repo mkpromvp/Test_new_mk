@@ -8,22 +8,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Create Fake ZIP
-        run: echo "AxionOS gta4l test file" > AxionOS-TEST-gta4l.zip
-
-      - name: Upload to SourceForge
+      - name: Debug Key
         env:
           SF_KEY: ${{ secrets.SF_PRIVATE_KEY }}
         run: |
-          mkdir -p ~/.ssh
-          echo "${SF_KEY}" > ~/.ssh/sf_key
-          chmod 600 ~/.ssh/sf_key
-          ssh-keyscan frs.sourceforge.net >> ~/.ssh/known_hosts 2>/dev/null
-          
-          rsync -avP \
-            -e "ssh -i ~/.ssh/sf_key -o StrictHostKeyChecking=no" \
-            "AxionOS-TEST-gta4l.zip" \
-            "mkpromvp@frs.sourceforge.net:/home/frs/project/gta4l-builds/"
-          
-          echo "✅ Done!"
-          echo "🔗 https://sourceforge.net/projects/gta4l-builds/files/"
+          echo "${SF_KEY}" > ~/.ssh/sf_key_test
+          echo "--- عدد الأسطر ---"
+          wc -l ~/.ssh/sf_key_test
+          echo "--- أول سطر ---"
+          head -1 ~/.ssh/sf_key_test
+          echo "--- آخر سطر ---"
+          tail -1 ~/.ssh/sf_key_test
+          echo "--- الحجم ---"
+          wc -c ~/.ssh/sf_key_test
