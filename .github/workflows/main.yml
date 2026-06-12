@@ -10,8 +10,10 @@ jobs:
     steps:
       - name: Create Fake ZIP
         run: |
-          echo "AxionOS gta4l test file" > test.tx
+          cd /tmp
+          echo "AxionOS gta4l test file" > test.txt
           zip AxionOS-TEST-gta4l.zip test.txt
+          ls -lh AxionOS-TEST-gta4l.zip
 
       - name: Setup SSH
         run: |
@@ -24,20 +26,9 @@ jobs:
         run: |
           eval $(ssh-agent -s)
           echo "${{ secrets.SF_PRIVATE_KEY }}" | base64 -d | tr -d '\r' | ssh-add -
-          
           rsync -avP \
             -e "ssh -o StrictHostKeyChecking=no" \
-            "AxionOS-TEST-gta4l.zip" \
-            "mkpromvp@frs.sourceforge.net:/home/frs/project/gta4l-builds/"
-          
-          echo "✅ Done!"
-          echo "🔗 https://sourceforge.net/projects/gta4l-builds/files/"
-
-      - name: Upload to SourceForge
-        run: |
-          rsync -avP \
-            -e "ssh -i ~/.ssh/sf_key -o StrictHostKeyChecking=no" \
-            "AxionOS-TEST-gta4l.zip" \
+            "/tmp/AxionOS-TEST-gta4l.zip" \
             "mkpromvp@frs.sourceforge.net:/home/frs/project/gta4l-builds/"
           echo "✅ Done!"
           echo "🔗 https://sourceforge.net/projects/gta4l-builds/files/"
