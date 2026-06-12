@@ -15,11 +15,14 @@ jobs:
         run: echo "AxionOS gta4l test file" > AxionOS-TEST-gta4l.zip
 
       - name: Upload to SourceForge
-        uses: Burnett01/rsync-deployments@7.0.1
-        with:
-          switches: -avP
-          path: AxionOS-TEST-gta4l.zip
-          remote_path: /home/frs/project/gta4l-builds/
-          remote_host: frs.sourceforge.net
-          remote_user: mkpromvp
-          remote_key: ${{ secrets.SF_PRIVATE_KEY }}
+        env:
+          SF_KEY_B64: ${{ secrets.SF_PRIVATE_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s' "$SF_KEY_B64" | base64 -d > ~/.ssh/sf_key
+          chmod 600 ~/.ssh/sf_key
+          ssh-keyscan frs.sourceforge.net >> ~/.ssh/known_hosts 2>/dev/null
+          rsync -avP \
+            -e "ssh -i ~/.ssh/sf_key -o StrictHostKeyChecking=no" \
+            "AxionOS-TEST-gta4l.zip" \
+            "mkpromvp@frs.sourceforge.net:/home/frs/project/gta4l-builds/"
