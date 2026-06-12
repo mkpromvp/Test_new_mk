@@ -9,21 +9,18 @@ jobs:
 
     steps:
       - name: Create Fake ZIP
-        run: |
-          echo "AxionOS gta4l test file" > AxionOS-TEST-gta4l.zip
+        run: echo "AxionOS gta4l test file" > AxionOS-TEST-gta4l.zip
 
-      - name: Save SSH Key to file
+      - name: Save SSH Key
         run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SF_PRIVATE_KEY }}" > ~/.ssh/sf_key
-          chmod 600 ~/.ssh/sf_key
-          wc -l ~/.ssh/sf_key
+          echo "${{ secrets.SF_PRIVATE_KEY }}" > /tmp/sf_key
+          chmod 600 /tmp/sf_key
 
       - name: Upload to SourceForge
         uses: appleboy/scp-action@v0.1.7
         with:
           host: frs.sourceforge.net
           username: mkpromvp
-          key_path: /root/.ssh/sf_key
+          key_path: /tmp/sf_key
           source: "AxionOS-TEST-gta4l.zip"
           target: "/home/frs/project/gta4l-builds/"
