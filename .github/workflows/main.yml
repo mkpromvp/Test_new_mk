@@ -13,14 +13,14 @@ jobs:
 
       - name: Save SSH Key
         run: |
-          echo "${{ secrets.SF_PRIVATE_KEY }}" > /tmp/sf_key
-          chmod 600 /tmp/sf_key
+          echo "${{ secrets.SF_PRIVATE_KEY }}" > $RUNNER_TEMP/sf_key
+          chmod 600 $RUNNER_TEMP/sf_key
 
       - name: Upload to SourceForge
         uses: appleboy/scp-action@v0.1.7
         with:
           host: frs.sourceforge.net
           username: mkpromvp
-          key_path: /tmp/sf_key
+          key_path: /github/runner_temp/sf_key
           source: "AxionOS-TEST-gta4l.zip"
           target: "/home/frs/project/gta4l-builds/"
