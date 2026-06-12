@@ -8,16 +8,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Debug Key
-        env:
-          SF_KEY: ${{ secrets.SF_PRIVATE_KEY }}
-        run: |
-          echo "${SF_KEY}" > ~/.ssh/sf_key_test
-          echo "--- عدد الأسطر ---"
-          wc -l ~/.ssh/sf_key_test
-          echo "--- أول سطر ---"
-          head -1 ~/.ssh/sf_key_test
-          echo "--- آخر سطر ---"
-          tail -1 ~/.ssh/sf_key_test
-          echo "--- الحجم ---"
-          wc -c ~/.ssh/sf_key_test
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create Fake ZIP
+        run: echo "AxionOS gta4l test file" > AxionOS-TEST-gta4l.zip
+
+      - name: Upload to SourceForge
+        uses: Burnett01/rsync-deployments@7.0.1
+        with:
+          switches: -avP
+          path: AxionOS-TEST-gta4l.zip
+          remote_path: /home/frs/project/gta4l-builds/
+          remote_host: frs.sourceforge.net
+          remote_user: mkpromvp
+          remote_key: ${{ secrets.SF_PRIVATE_KEY }}
