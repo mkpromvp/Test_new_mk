@@ -14,19 +14,18 @@ jobs:
           echo "AxionOS gta4l test file" > test.txt
           zip AxionOS-TEST-gta4l.zip test.txt
 
-      - name: Setup SSH
-        env:
-          SF_KEY: ${{ secrets.SF_PRIVATE_KEY }}
-        run: |
-          mkdir -p ~/.ssh
-          echo "$SF_KEY" | base64 -d > ~/.ssh/sf_key
-          chmod 600 ~/.ssh/sf_key
-          ssh-keyscan frs.sourceforge.net >> ~/.ssh/known_hosts 2>/dev/null
+      - name: Setup SSH Agent
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SF_PRIVATE_KEY }}
+
+      - name: Add SF to known hosts
+        run: ssh-keyscan frs.sourceforge.net >> ~/.ssh/known_hosts
 
       - name: Upload to SourceForge
         run: |
           rsync -avP \
-            -e "ssh -i ~/.ssh/sf_key -o StrictHostKeyChecking=no" \
+            -e "ssh -o StrictHostKeyChecking=no" \
             "/tmp/AxionOS-TEST-gta4l.zip" \
             "mkpromvp@frs.sourceforge.net:/home/frs/project/gta4l-builds/"
           echo "✅ Done!"
