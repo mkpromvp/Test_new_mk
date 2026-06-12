@@ -10,9 +10,8 @@ jobs:
     steps:
       - name: Create Fake ZIP
         run: |
-          cd /tmp
-          echo "AxionOS gta4l test file" > test.txt
-          zip AxionOS-TEST-gta4l.zip test.txt
+          echo "AxionOS gta4l test file" > AxionOS-TEST-gta4l.zip
+          ls -lh AxionOS-TEST-gta4l.zip
 
       - name: Upload to SourceForge
         uses: appleboy/scp-action@v0.1.7
@@ -20,5 +19,5 @@ jobs:
           host: frs.sourceforge.net
           username: mkpromvp
           key: ${{ secrets.SF_PRIVATE_KEY }}
-          source: "/tmp/AxionOS-TEST-gta4l.zip"
+          source: "AxionOS-TEST-gta4l.zip"
           target: "/home/frs/project/gta4l-builds/"
