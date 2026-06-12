@@ -15,9 +15,11 @@ jobs:
           zip AxionOS-TEST-gta4l.zip test.txt
 
       - name: Setup SSH
+        env:
+          SF_KEY: ${{ secrets.SF_PRIVATE_KEY }}
         run: |
           mkdir -p ~/.ssh
-          printf '%s\n' "${{ secrets.SF_PRIVATE_KEY }}" > ~/.ssh/sf_key
+          echo "$SF_KEY" | base64 -d > ~/.ssh/sf_key
           chmod 600 ~/.ssh/sf_key
           ssh-keyscan frs.sourceforge.net >> ~/.ssh/known_hosts 2>/dev/null
 
